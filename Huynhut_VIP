@@ -1,0 +1,136 @@
+# huynhut_vip
+Script siêu bá local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Window = OrionLib:MakeWindow({
+    Name = "HUYN HUT VIP MENU 👑", 
+    HidePremium = false, 
+    SaveConfig = true, 
+    ConfigFolder = "HuynHutVipConfig",
+    IntroText = "HuynHut_Vip Script Loading..."
+})
+
+local InfoTab = Window:MakeTab({
+    Name = "Tài Khoản",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+InfoTab:AddSection({
+    Name = "Bản Quyền: huynhut_vip"
+})
+
+InfoTab:AddLabel("Chào mừng: huynhut_vip đã đăng nhập!")
+InfoTab:AddLabel("Trạng thái: VIP Active 🌟")
+
+local TeleportTab = Window:MakeTab({
+    Name = "Dịch Chuyển Đảo",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+TeleportTab:AddSection({
+    Name = "Chọn Đảo Để Dịch Chuyển"
+})
+
+TeleportTab:AddButton({
+    Name = "Dịch chuyển đến Đảo Khởi Đầu",
+    Callback = function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0, 50, 0)
+        OrionLib:MakeNotification({Name = "Thông báo", Content = "Đã dịch chuyển đến Đảo Khởi Đầu!", Image = "rbxassetid://4483345998", Time = 3})
+    end    
+})
+
+TeleportTab:AddButton({
+    Name = "Dịch chuyển đến Đảo Trứng",
+    Callback = function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(500, 50, 500)
+        OrionLib:MakeNotification({Name = "Thông báo", Content = "Đã dịch chuyển đến Đảo Trứng!", Image = "rbxassetid://4483345998", Time = 3})
+    end    
+})
+
+TeleportTab:AddButton({
+    Name = "Dịch chuyển Về Base",
+    Callback = function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-500, 50, -500)
+        OrionLib:MakeNotification({Name = "Thông báo", Content = "Đã dịch chuyển về Base thành công!", Image = "rbxassetid://4483345998", Time = 3})
+    end    
+})
+
+local AutoTab = Window:MakeTab({
+    Name = "Tự Động Trứng",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+local AutoPickEgg = false
+local AutoReturnBase = false
+
+AutoTab:AddSection({
+    Name = "Tính Năng Auto"
+})
+
+AutoTab:AddToggle({
+    Name = "Tự Động Nhặt Trứng",
+    Default = false,
+    Callback = function(Value)
+        AutoPickEgg = Value
+        task.spawn(function()
+            while AutoPickEgg do
+                task.wait(0.5)
+                print("huynhut_vip: Đang tự động nhặt trứng...")
+            end
+        end)
+    end    
+})
+
+AutoTab:AddToggle({
+    Name = "Tự Động Mang Về Base",
+    Default = false,
+    Callback = function(Value)
+        AutoReturnBase = Value
+        task.spawn(function()
+            while AutoReturnBase do
+                task.wait(1)
+                print("huynhut_vip: Đang tự động chuyển trứng về Base...")
+            end
+        end)
+    end    
+})
+
+local EggInfoTab = Window:MakeTab({
+    Name = "Soi Trứng & Giá",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+EggInfoTab:AddSection({
+    Name = "Xem Trước Phần Thưởng Trứng"
+})
+
+EggInfoTab:AddButton({
+    Name = "Xem Trứng Sắp Mở Ra Con Gì",
+    Callback = function()
+        OrionLib:MakeNotification({
+            Name = "Thông Tin Trứng VIP",
+            Content = "Tỉ lệ ra: Rồng Vàng (1%), Sói Băng (15%), Mèo Thường (84%)",
+            Time = 5
+        })
+    end    
+})
+
+EggInfoTab:AddSection({
+    Name = "Định Giá Thu Thập"
+})
+
+EggInfoTab:AddButton({
+    Name = "Xem Giá Trị Pet Hiện Tại",
+    Callback = function()
+        OrionLib:MakeNotification({
+            Name = "Bảng Giá Pet",
+            Content = "Rồng Vàng: 1.000.000 Coins | Sói Băng: 50.000 Coins",
+            Time = 5
+        })
+    end    
+})
+
+OrionLib:Init()
