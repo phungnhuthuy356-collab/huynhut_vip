@@ -1,136 +1,131 @@
-# huynhut_vip
-Script siêu bá local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
 
-local Window = OrionLib:MakeWindow({
-    Name = "HUYN HUT VIP MENU 👑", 
-    HidePremium = false, 
-    SaveConfig = true, 
-    ConfigFolder = "HuynHutVipConfig",
-    IntroText = "HuynHut_Vip Script Loading..."
-})
+--[[
+    HUYNHUT_VIP
+    STEAL AN EGG EDITION
+    VIP GUI + RGB + ESP EGG
+]]
 
-local InfoTab = Window:MakeTab({
-    Name = "Tài Khoản",
-    Icon = "rbxassetid://4483345998",
-    PremiumOnly = false
-})
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
 
-InfoTab:AddSection({
-    Name = "Bản Quyền: huynhut_vip"
-})
+local Player = Players.LocalPlayer
+local EggFolder = workspace
 
-InfoTab:AddLabel("Chào mừng: huynhut_vip đã đăng nhập!")
-InfoTab:AddLabel("Trạng thái: VIP Active 🌟")
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "HUYNHUT_VIP"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = Player:WaitForChild("PlayerGui")
 
-local TeleportTab = Window:MakeTab({
-    Name = "Dịch Chuyển Đảo",
-    Icon = "rbxassetid://4483345998",
-    PremiumOnly = false
-})
+-- MAIN GUI
+local Main = Instance.new("Frame")
+Main.Size = UDim2.new(0, 260, 0, 220)
+Main.Position = UDim2.new(0.5, -130, 0.5, -110)
+Main.BackgroundColor3 = Color3.fromRGB(15, 10, 25)
+Main.Parent = ScreenGui
 
-TeleportTab:AddSection({
-    Name = "Chọn Đảo Để Dịch Chuyển"
-})
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 12)
 
-TeleportTab:AddButton({
-    Name = "Dịch chuyển đến Đảo Khởi Đầu",
-    Callback = function()
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0, 50, 0)
-        OrionLib:MakeNotification({Name = "Thông báo", Content = "Đã dịch chuyển đến Đảo Khởi Đầu!", Image = "rbxassetid://4483345998", Time = 3})
-    end    
-})
+local Stroke = Instance.new("UIStroke")
+Stroke.Thickness = 2
+Stroke.Parent = Main
 
-TeleportTab:AddButton({
-    Name = "Dịch chuyển đến Đảo Trứng",
-    Callback = function()
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(500, 50, 500)
-        OrionLib:MakeNotification({Name = "Thông báo", Content = "Đã dịch chuyển đến Đảo Trứng!", Image = "rbxassetid://4483345998", Time = 3})
-    end    
-})
+-- TITLE
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, 0, 0, 45)
+Title.BackgroundTransparency = 1
+Title.Text = "HUYNHUT VIP"
+Title.TextColor3 = Color3.new(1, 1, 1)
+Title.TextSize = 23
+Title.Font = Enum.Font.GothamBold
+Title.Parent = Main
 
-TeleportTab:AddButton({
-    Name = "Dịch chuyển Về Base",
-    Callback = function()
-        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-500, 50, -500)
-        OrionLib:MakeNotification({Name = "Thông báo", Content = "Đã dịch chuyển về Base thành công!", Image = "rbxassetid://4483345998", Time = 3})
-    end    
-})
+-- RGB ANIMATION
+local Hue = 0
 
-local AutoTab = Window:MakeTab({
-    Name = "Tự Động Trứng",
-    Icon = "rbxassetid://4483345998",
-    PremiumOnly = false
-})
+RunService.RenderStepped:Connect(function(dt)
+    Hue = (Hue + dt * 0.25) % 1
+    local Color = Color3.fromHSV(Hue, 1, 1)
+    Stroke.Color = Color
+    Title.TextColor3 = Color
+end)
 
-local AutoPickEgg = false
-local AutoReturnBase = false
+-- BUTTON CREATOR
+local function CreateButton(Text, Position)
+    local Button = Instance.new("TextButton")
+    Button.Size = UDim2.new(0, 220, 0, 38)
+    Button.Position = Position
+    Button.BackgroundColor3 = Color3.fromRGB(35, 20, 55)
+    Button.Text = Text
+    Button.TextColor3 = Color3.new(1, 1, 1)
+    Button.TextSize = 14
+    Button.Font = Enum.Font.GothamBold
+    Button.Parent = Main
 
-AutoTab:AddSection({
-    Name = "Tính Năng Auto"
-})
+    Instance.new("UICorner", Button).CornerRadius = UDim.new(0, 8)
 
-AutoTab:AddToggle({
-    Name = "Tự Động Nhặt Trứng",
-    Default = false,
-    Callback = function(Value)
-        AutoPickEgg = Value
-        task.spawn(function()
-            while AutoPickEgg do
-                task.wait(0.5)
-                print("huynhut_vip: Đang tự động nhặt trứng...")
+    return Button
+end
+
+-- ESP EGG
+local ESPEnabled = false
+local Highlights = {}
+
+local ESPButton = CreateButton(
+    "ESP EGG: OFF",
+    UDim2.new(0, 20, 0, 60)
+)
+
+ESPButton.MouseButton1Click:Connect(function()
+    ESPEnabled = not ESPEnabled
+    ESPButton.Text = ESPEnabled and "ESP EGG: ON" or "ESP EGG: OFF"
+
+    if not ESPEnabled then
+        for _, Highlight in pairs(Highlights) do
+            Highlight:Destroy()
+        end
+        table.clear(Highlights)
+        return
+    end
+
+    for _, Object in ipairs(EggFolder:GetDescendants()) do
+        if Object.Name:lower():find("egg") then
+            local Target = Object:IsA("Model") or Object:IsA("BasePart")
+            if Target then
+                local Highlight = Instance.new("Highlight")
+                Highlight.FillColor = Color3.fromRGB(170, 0, 255)
+                Highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+                Highlight.Adornee = Object
+                Highlight.Parent = ScreenGui
+                table.insert(Highlights, Highlight)
             end
-        end)
-    end    
-})
+        end
+    end
+end)
 
-AutoTab:AddToggle({
-    Name = "Tự Động Mang Về Base",
-    Default = false,
-    Callback = function(Value)
-        AutoReturnBase = Value
-        task.spawn(function()
-            while AutoReturnBase do
-                task.wait(1)
-                print("huynhut_vip: Đang tự động chuyển trứng về Base...")
-            end
-        end)
-    end    
-})
+-- AUTO COLLECT
+local AutoEnabled = false
 
-local EggInfoTab = Window:MakeTab({
-    Name = "Soi Trứng & Giá",
-    Icon = "rbxassetid://4483345998",
-    PremiumOnly = false
-})
+local AutoButton = CreateButton(
+    "AUTO COLLECT: OFF",
+    UDim2.new(0, 20, 0, 110)
+)
 
-EggInfoTab:AddSection({
-    Name = "Xem Trước Phần Thưởng Trứng"
-})
+AutoButton.MouseButton1Click:Connect(function()
+    AutoEnabled = not AutoEnabled
+    AutoButton.Text = AutoEnabled and
+        "AUTO COLLECT: ON" or "AUTO COLLECT: OFF"
+end)
 
-EggInfoTab:AddButton({
-    Name = "Xem Trứng Sắp Mở Ra Con Gì",
-    Callback = function()
-        OrionLib:MakeNotification({
-            Name = "Thông Tin Trứng VIP",
-            Content = "Tỉ lệ ra: Rồng Vàng (1%), Sói Băng (15%), Mèo Thường (84%)",
-            Time = 5
-        })
-    end    
-})
+-- AUTO COLLECT STATUS
+local Status = Instance.new("TextLabel")
+Status.Size = UDim2.new(1, 0, 0, 30)
+Status.Position = UDim2.new(0, 0, 0, 165)
+Status.BackgroundTransparency = 1
+Status.Text = "HUYNHUT VIP | READY"
+Status.TextColor3 = Color3.fromRGB(200, 150, 255)
+Status.TextSize = 12
+Status.Font = Enum.Font.Gotham
+Status.Parent = Main
 
-EggInfoTab:AddSection({
-    Name = "Định Giá Thu Thập"
-})
-
-EggInfoTab:AddButton({
-    Name = "Xem Giá Trị Pet Hiện Tại",
-    Callback = function()
-        OrionLib:MakeNotification({
-            Name = "Bảng Giá Pet",
-            Content = "Rồng Vàng: 1.000.000 Coins | Sói Băng: 50.000 Coins",
-            Time = 5
-        })
-    end    
-})
-
-OrionLib:Init()
+print("HUYNHUT VIP LOADED!")
