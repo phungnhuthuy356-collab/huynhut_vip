@@ -1,0 +1,128 @@
+-- HUYNHUT VIP | STEAL A EGG
+-- Purple Neon Edition
+-- GUI + Egg Finder
+
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+
+local Player = Players.LocalPlayer
+
+local GUI = Instance.new("ScreenGui")
+GUI.Name = "HUYNHUT_VIP"
+GUI.ResetOnSpawn = false
+
+local Main = Instance.new("Frame")
+Main.Size = UDim2.new(0, 330, 0, 390)
+Main.Position = UDim2.new(0.5, -165, 0.5, -195)
+Main.BackgroundColor3 = Color3.fromRGB(15, 10, 25)
+Main.Parent = GUI
+
+local Corner = Instance.new("UICorner")
+Corner.CornerRadius = UDim.new(0, 14)
+Corner.Parent = Main
+
+local Stroke = Instance.new("UIStroke")
+Stroke.Color = Color3.fromRGB(170, 60, 255)
+Stroke.Thickness = 2
+Stroke.Parent = Main
+
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, 0, 0, 50)
+Title.BackgroundTransparency = 1
+Title.Text = "HUYNHUT VIP"
+Title.TextColor3 = Color3.fromRGB(190, 100, 255)
+Title.TextSize = 25
+Title.Font = Enum.Font.GothamBold
+Title.Parent = Main
+
+local Subtitle = Instance.new("TextLabel")
+Subtitle.Position = UDim2.new(0, 0, 0, 45)
+Subtitle.Size = UDim2.new(1, 0, 0, 25)
+Subtitle.BackgroundTransparency = 1
+Subtitle.Text = "STEAL A EGG | EGG FINDER"
+Subtitle.TextColor3 = Color3.fromRGB(220, 190, 255)
+Subtitle.TextSize = 12
+Subtitle.Parent = Main
+
+local List = Instance.new("ScrollingFrame")
+List.Position = UDim2.new(0, 12, 0, 85)
+List.Size = UDim2.new(1, -24, 0, 240)
+List.BackgroundColor3 = Color3.fromRGB(25, 17, 38)
+List.ScrollBarThickness = 4
+List.Parent = Main
+
+local Layout = Instance.new("UIListLayout")
+Layout.Padding = UDim.new(0, 7)
+Layout.Parent = List
+
+local Status = Instance.new("TextLabel")
+Status.Position = UDim2.new(0, 10, 1, -45)
+Status.Size = UDim2.new(1, -20, 0, 30)
+Status.BackgroundTransparency = 1
+Status.Text = "Status: Ready"
+Status.TextColor3 = Color3.fromRGB(190, 120, 255)
+Status.TextSize = 13
+Status.Parent = Main
+
+local function FindEggs()
+    for _, item in pairs(List:GetChildren()) do
+        if item:IsA("TextButton") then
+            item:Destroy()
+        end
+    end
+
+    local count = 0
+
+    for _, obj in pairs(Workspace:GetDescendants()) do
+        if obj:IsA("Model") and string.find(
+            string.lower(obj.Name), "egg"
+        ) then
+            count += 1
+
+            local Button = Instance.new("TextButton")
+            Button.Size = UDim2.new(1, -10, 0, 42)
+            Button.BackgroundColor3 = Color3.fromRGB(65, 30, 100)
+            Button.TextColor3 = Color3.new(1, 1, 1)
+            Button.TextSize = 13
+            Button.Font = Enum.Font.GothamBold
+            Button.Text = obj.Name .. " | Select"
+            Button.Parent = List
+
+            local ButtonCorner = Instance.new("UICorner")
+            ButtonCorner.CornerRadius = UDim.new(0, 8)
+            ButtonCorner.Parent = Button
+
+            Button.MouseButton1Click:Connect(function()
+                local part = obj.PrimaryPart
+                    or obj:FindFirstChildWhichIsA("BasePart", true)
+
+                if part then
+                    Status.Text = "Selected: " .. obj.Name
+
+                    -- Định vị đối tượng đã chọn
+                    -- Không tự dịch chuyển hoặc chiếm trứng.
+                    local camera = Workspace.CurrentCamera
+                    camera.Focus = CFrame.new(part.Position)
+                end
+            end)
+        end
+    end
+
+    List.CanvasSize = UDim2.new(0, 0, 0, count * 49)
+    Status.Text = "Found " .. count .. " eggs"
+end
+
+local Refresh = Instance.new("TextButton")
+Refresh.Position = UDim2.new(0, 12, 0, 335)
+Refresh.Size = UDim2.new(1, -24, 0, 35)
+Refresh.BackgroundColor3 = Color3.fromRGB(125, 45, 210)
+Refresh.Text = "REFRESH EGG LIST"
+Refresh.TextColor3 = Color3.new(1, 1, 1)
+Refresh.Font = Enum.Font.GothamBold
+Refresh.TextSize = 13
+Refresh.Parent = Main
+
+Refresh.MouseButton1Click:Connect(FindEggs)
+
+GUI.Parent = Player:WaitForChild("PlayerGui")
+FindEggs()
